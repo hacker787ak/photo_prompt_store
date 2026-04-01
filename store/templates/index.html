@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Prompt Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #050a0a; color: #ffffff; font-family: sans-serif; margin: 0; }
+        
+        /* Navbar */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; background: #0a1414; border-bottom: 1px solid #1a3333;
+        }
+        
+        /* Sidebar Menu (Admin Hata Diya) */
+        .sidenav {
+            height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0;
+            background-color: #0a1414; overflow-x: hidden; transition: 0.5s; padding-top: 60px;
+            border-right: 1px solid #00ffaa;
+        }
+        .sidenav a { padding: 15px 25px; text-decoration: none; font-size: 16px; color: #888; display: block; }
+        .sidenav a:hover { color: #00ffaa; background: #112222; }
+        .sidenav .closebtn { position: absolute; top: 0; right: 25px; font-size: 36px; }
+
+        /* Search Form */
+        .search-container { padding: 15px; }
+        .search-form { display: flex; gap: 5px; }
+        .search-box {
+            flex-grow: 1; padding: 12px; border-radius: 10px;
+            background: #0f1a1a; border: 1px solid #1a3333; color: white;
+        }
+        .search-btn { background: #00ffaa; border: none; border-radius: 10px; padding: 0 15px; cursor: pointer; }
+
+        /* Categories (Tags) */
+        .categories { display: flex; overflow-x: auto; padding: 0 15px 15px; gap: 10px; scrollbar-width: none; }
+        .tag-link { text-decoration: none; color: inherit; }
+        .tag {
+            background: #112222; padding: 6px 15px; border-radius: 20px;
+            font-size: 12px; white-space: nowrap; border: 1px solid #1a3333; transition: 0.3s;
+        }
+        .tag:hover { border-color: #00ffaa; color: #00ffaa; }
+
+        /* Grid */
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
+        .card { background: #0a1414; border: 1.5px solid #1a3333; border-radius: 15px; padding: 8px; }
+        img { width: 100%; border-radius: 10px; aspect-ratio: 1/1; object-fit: cover; }
+        .unlock-btn {
+            background: #00ffaa; color: #000; text-decoration: none;
+            font-size: 11px; font-weight: bold; padding: 8px; border-radius: 6px; 
+            display: block; text-align: center; margin-top: 10px;
+        }
+        .watermark { text-align: center; font-size: 10px; color: #222; letter-spacing: 2px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a href="#"><i class="fas fa-envelope"></i> {{ user.email|default:"Guest User" }}</a>
+      <a href="#"><i class="fas fa-history"></i> My Purchases</a>
+      <a href="#"><i class="fas fa-cog"></i> Profile Settings</a>
+      <a href="/admin/logout/"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="navbar">
+        <i class="fas fa-bars" style="color: #00ffaa; cursor:pointer;" onclick="openNav()"></i>
+        <div style="color: #00ffaa; font-weight: bold;">Welcome To Photo Prompt</div>
+        <div style="width: 30px; height: 30px; border-radius: 50%; border: 2px solid #00ffaa; text-align: center; line-height: 26px;">
+            {{ user.username|slice:":1"|upper|default:"G" }}
+        </div>
+    </div>
+
+    <div class="search-container">
+        <form class="search-form" method="GET" action="/">
+            <input type="text" name="q" class="search-box" placeholder="Search styles, or creators..." value="{{ query|default:'' }}">
+            <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+        </form>
+    </div>
+
+    <div class="categories">
+        <a href="/" class="tag-link"><div class="tag" style="border-color: #00ffaa;">All</div></a>
+        <a href="/?q=Attitude+Boy" class="tag-link"><div class="tag">Attitude Boy</div></a>
+        <a href="/?q=Attitude+Girl" class="tag-link"><div class="tag">Attitude Girl</div></a>
+        <a href="/?q=Hyper-realistic" class="tag-link"><div class="tag">Hyper-realistic</div></a>
+        <a href="/?q=Anime" class="tag-link"><div class="tag">Anime</div></a>
+        <a href="/?q=Cyberpunk" class="tag-link"><div class="tag">Cyberpunk</div></a>
+    </div>
+
+    <div class="watermark">NO SCREENSHOTS ALLOWED</div>
+
+    <div class="grid">
+        {% for item in prompts %}
+        <div class="card">
+            <img src="{{ item.image.url }}">
+            <div style="font-size: 13px; margin-top: 8px; font-weight: 600;">{{ item.title }}</div>
+            <div style="font-size: 10px; color: #666;">{{ item.description|truncatechars:30 }}</div>
+            <div style="display: flex; align-items: center; gap: 5px; margin-top: 10px;">
+                <div style="background: #112222; color: #00ffaa; font-size: 12px; padding: 4px 8px; border-radius: 4px;">₹{{ item.price|floatformat:0 }}</div>
+                <a href="/prompt/{{ item.id }}/" class="unlock-btn" style="flex-grow: 1;">Unlock Prompt</a>
+            </div>
+        </div>
+        {% empty %}
+            <p style="text-align: center; grid-column: span 2; color: #444; margin-top: 50px;">No prompts found matching your search.</p>
+        {% endfor %}
+    </div>
+
+    <script>
+    function openNav() { document.getElementById("mySidenav").style.width = "250px"; }
+    function closeNav() { document.getElementById("mySidenav").style.width = "0"; }
+    </script>
+
+</body>
+</html>

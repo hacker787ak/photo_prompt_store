@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Photo Prompt Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-container {
+        padding: 0 20px;
+        margin-top: 15px;
+    }
+
+    .search-box {
+        background-color: transparent;
+        border: 1px solid var(--text-muted);
+        border-radius: 25px;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-box i {
+        color: var(--neon-green);
+        margin-right: 15px;
+    }
+
+    .search-box input {
+        background: none;
+        border: none;
+        color: white;
+        width: 100%;
+        outline: none;
+    }
+
+    .hero-banner {
+        margin: 20px;
+        padding: 24px;
+    }
+
+    .hero-copy h2 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        margin-bottom: 12px;
+    }
+
+    .hero-copy p {
+        color: var(--text-muted);
+        max-width: 720px;
+        margin-bottom: 0;
+    }
+
+    .categories-wrapper {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 20px;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .categories-wrapper::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category-chip {
+        display: inline-block;
+        border: 1px solid var(--text-muted);
+        border-radius: 20px;
+        padding: 6px 16px;
+        margin-right: 10px;
+        font-size: 14px;
+        color: var(--text-light);
+        cursor: default;
+        transition: 0.3s;
+    }
+
+    .category-chip:hover,
+    .category-chip.active {
+        border-color: var(--neon-green);
+        color: var(--neon-green);
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .prompt-grid {
+        margin-top: 10px;
+    }
+
+    .prompt-card {
+        background-color: var(--card-bg);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        transition: 0.3s;
+        height: 100%;
+    }
+
+    .prompt-card:hover {
+        border-color: var(--neon-green);
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        transform: translateY(-5px);
+    }
+
+    .prompt-img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-bottom: 2px solid var(--neon-green);
+        background: #020617;
+    }
+
+    .card-body-custom {
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 220px);
+    }
+
+    .prompt-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .prompt-desc {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 15px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 36px;
+    }
+
+    .price-btn-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-top: auto;
+    }
+
+    .price-tag {
+        border: 1px solid var(--neon-green);
+        color: var(--neon-green);
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .unlock-btn {
+        background-color: var(--neon-green);
+        color: #000;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: bold;
+        width: 100%;
+        transition: 0.3s;
+    }
+
+    .unlock-btn:hover {
+        background-color: #0fa472;
+        color: white;
+    }
+
+    .empty-state {
+        padding: 60px 24px;
+        text-align: center;
+        margin: 20px;
+    }
+
+    .empty-state h3 {
+        color: var(--neon-green);
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: var(--text-muted);
+        margin: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero-banner glass-panel">
+    <div class="hero-copy">
+        <h2>Premium AI Photo Prompts</h2>
+        <p>Unlock curated visual prompts with a dark neon storefront, instant UPI checkout, and secure prompt delivery after verification.</p>
+    </div>
+    <div class="hero-actions mt-3">
+        {% if user.is_authenticated %}
+            <a href="{% url 'my_prompts' %}" class="neon-btn">Open My Prompts</a>
+        {% else %}
+            <a href="{% url 'account_signup' %}" class="neon-btn">Create Account</a>
+            <a href="{% url 'account_login' %}" class="neon-link">Login to Buy</a>
+        {% endif %}
+    </div>
+</section>
+
+<div class="search-container">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search prompts, styles, or creators..." disabled>
+    </div>
+</div>
+
+<div class="categories-wrapper">
+    <span class="category-chip active">🔥 Trending</span>
+    <span class="category-chip">Romantic Couple</span>
+    <span class="category-chip">Attitude Boy</span>
+    <span class="category-chip">Attitude Girl</span>
+    <span class="category-chip">Hyper-realistic</span>
+    <span class="category-chip">Beautiful Women</span>
+    <span class="category-chip">Handsome Man</span>
+    <span class="category-chip">Beautiful Saree Women</span>
+    <span class="category-chip">Beautiful Woman Dress</span>
+    <span class="category-chip">Dress Boys</span>
+</div>
+
+{% if prompts %}
+    <div class="row prompt-grid">
+        {% for item in prompts %}
+            <div class="col-12 col-md-6 col-lg-4 d-flex">
+                <div class="prompt-card w-100">
+                    <img src="{{ item.image.url }}" alt="{{ item.title }}" class="prompt-img">
+                    <div class="card-body-custom">
+                        <div class="prompt-title">{{ item.title }}</div>
+                        <div class="prompt-desc">{{ item.description }}</div>
+                        <div class="price-btn-row">
+                            <span class="price-tag">₹{{ item.price }}</span>
+                            <a href="{% url 'prompt_detail' item.pk %}" class="unlock-btn text-center">View Prompt</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state glass-panel">
+        <h3>Store is empty, coming soon!</h3>
+        <p>Fresh premium prompts will drop here after you upload your first collection in the Django admin.</p>
+    </div>
+{% endif %}
+{% endblock %}

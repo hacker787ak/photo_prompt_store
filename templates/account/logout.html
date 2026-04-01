@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+<section class="row justify-content-center mt-4">
+    <div class="col-md-7 col-lg-5">
+        <div class="glass-panel p-4 p-lg-5 text-center">
+            <p class="text-uppercase text-muted mb-2">Session</p>
+            <h2 class="mb-3">Logout</h2>
+            <p class="text-muted mb-4">Confirm if you want to end your current session.</p>
+            <form method="post" action="{% url 'account_logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="neon-btn w-100">Logout</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout | {{ item.title }}{% endblock %}
+
+{% block content %}
+<section class="row justify-content-center mt-4">
+    <div class="col-lg-10">
+        <div class="glass-panel p-4 p-lg-5">
+            <div class="row g-4 align-items-center">
+                <div class="col-md-5">
+                    <img src="{{ item.image.url }}" alt="{{ item.title }}" class="img-fluid rounded-4 border border-success-subtle">
+                </div>
+                <div class="col-md-7">
+                    <p class="text-uppercase text-muted mb-2">Checkout</p>
+                    <h2 class="mb-2">{{ item.title }}</h2>
+                    <p class="text-muted">{{ item.description }}</p>
+                    <div class="d-flex align-items-center gap-3 flex-wrap mb-4">
+                        <span class="price-tag fs-6">₹{{ item.price }}</span>
+                        <a class="neon-btn" href="upi://pay?pa=9653314458@naviaxis&pn=PhotoPrompt&am={{ item.price }}&cu=INR">Pay with UPI</a>
+                        <a class="neon-link" href="{% url 'prompt_detail' item.pk %}">Back to Prompt</a>
+                    </div>
+
+                    <div class="glass-panel p-3 mb-4">
+                        <p class="mb-2"><strong>UPI Link</strong></p>
+                        <code class="text-break">upi://pay?pa=9653314458@naviaxis&pn=PhotoPrompt&am={{ item.price }}&cu=INR</code>
+                    </div>
+
+                    <form method="post" class="mt-3">
+                        {% csrf_token %}
+                        <label for="utr_number" class="form-label">Enter your UTR number after payment</label>
+                        <input type="text" class="form-control mb-3" id="utr_number" name="utr_number" placeholder="Transaction / UTR number" required>
+                        <button type="submit" class="neon-btn">Submit UTR & Unlock</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

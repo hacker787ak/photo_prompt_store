@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}My Prompts{% endblock %}
+
+{% block content %}
+<section class="mt-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <p class="text-uppercase text-muted mb-2">Library</p>
+            <h2 class="mb-0">My Unlocked Prompts</h2>
+        </div>
+        <a href="{% url 'home' %}" class="neon-link">Browse Store</a>
+    </div>
+
+    {% if purchases %}
+        <div class="row g-4">
+            {% for purchase in purchases %}
+                <div class="col-12 col-lg-6">
+                    <div class="glass-panel p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                            <div>
+                                <h4 class="mb-1">{{ purchase.prompt_item.title }}</h4>
+                                <p class="text-muted mb-0">{{ purchase.prompt_item.description }}</p>
+                            </div>
+                            <span class="price-tag">Unlocked</span>
+                        </div>
+                        <div class="glass-panel p-3">
+                            <p class="text-uppercase text-muted mb-2">Prompt Text</p>
+                            <pre class="mb-0 text-light" style="white-space: pre-wrap; font-family: inherit;">{{ purchase.prompt_item.prompt_text }}</pre>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="glass-panel p-5 text-center">
+            <h3 class="mb-2">No unlocked prompts yet</h3>
+            <p class="text-muted mb-3">Complete checkout for any prompt and it will show up here immediately.</p>
+            <a href="{% url 'home' %}" class="neon-btn">Explore Store</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

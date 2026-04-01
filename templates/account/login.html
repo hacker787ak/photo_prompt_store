@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<section class="row justify-content-center mt-4">
+    <div class="col-md-8 col-lg-5">
+        <div class="glass-panel p-4 p-lg-5">
+            <p class="text-uppercase text-muted mb-2">Account Access</p>
+            <h2 class="mb-4">Login</h2>
+            <form method="post" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+                {% endif %}
+                <button type="submit" class="neon-btn w-100 mb-3">Login</button>
+            </form>
+            <a href="{% provider_login_url 'google' process='login' %}" class="neon-link w-100 mb-3">Continue with Google</a>
+            <p class="text-muted mb-0">No account yet? <a href="{% url 'account_signup' %}" class="text-success">Create one</a>.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

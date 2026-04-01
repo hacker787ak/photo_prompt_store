@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detail-image {
+        width: 100%;
+        border-radius: 20px;
+        max-height: 440px;
+        object-fit: cover;
+        border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .prompt-area {
+        min-height: 240px;
+        resize: none;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .unlock-cta {
+        padding: 14px 20px;
+        font-size: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="row g-4 mt-4">
+    <div class="col-lg-5">
+        <div class="glass-panel p-4 h-100">
+            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="detail-image mb-4">
+            <p class="text-uppercase text-muted mb-2">Prompt Listing</p>
+            <h2 class="mb-2">{{ item.title }}</h2>
+            <p class="text-muted mb-4">{{ item.description }}</p>
+            <div class="d-flex gap-3 flex-wrap align-items-center">
+                <span class="price-tag fs-6">₹{{ item.price }}</span>
+                {% if has_access %}
+                    <span class="neon-link">Unlocked</span>
+                {% elif user.is_authenticated %}
+                    <a href="{% url 'checkout' item.pk %}" class="neon-btn unlock-cta">Pay ₹{{ item.price }} to Unlock</a>
+                {% else %}
+                    <a href="{% url 'account_login' %}?next={% url 'prompt_detail' item.pk %}" class="neon-btn unlock-cta">Login to Unlock</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="glass-panel p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-3">
+                <div>
+                    <p class="text-uppercase text-muted mb-2">Secret Prompt</p>
+                    <h3 class="mb-0">Prompt Content</h3>
+                </div>
+                {% if has_access %}
+                    <button type="button" class="neon-btn" id="copyPromptBtn">Copy Prompt</button>
+                {% endif %}
+            </div>
+
+            {% if has_access %}
+                <textarea readonly class="form-control prompt-area" id="promptText">{{ item.prompt_text }}</textarea>
+                <p class="text-muted mt-3 mb-0">This prompt is unlocked for your account and can be copied directly.</p>
+            {% else %}
+                <textarea readonly class="form-control prompt-area hidden-prompt" id="promptText">{{ item.prompt_text }}</textarea>
+                <p class="text-muted mt-3 mb-3">The prompt is blurred until payment is completed for this listing.</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'checkout' item.pk %}" class="neon-btn">Pay ₹{{ item.price }} to Unlock</a>
+                {% else %}
+                    <a href="{% url 'account_signup' %}?next={% url 'prompt_detail' item.pk %}" class="neon-btn">Create Account to Unlock</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% if has_access %}
+<script>
+    document.getElementById('copyPromptBtn')?.addEventListener('click', async function () {
+        const promptValue = document.getElementById('promptText').value;
+        try {
+            await navigator.clipboard.writeText(promptValue);
+            this.textContent = 'Copied';
+            setTimeout(() => {
+                this.textContent = 'Copy Prompt';
+            }, 1500);
+        } catch (error) {
+            this.textContent = 'Copy Failed';
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}
