@@ -1,8 +1,9 @@
 import os
 from pathlib import Path
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = 'django-insecure-your-secret-key-here'
+SECRET_KEY = 'django-insecure-akshay-key'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
@@ -49,6 +50,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'photoprompt.wsgi.application'
 
+# -- PostgreSQL Database --
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -74,26 +82,3 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# -- PostgreSQL Connection --
-import dj_database_url
-import os
-if os.environ.get('DATABASE_URL'):
-    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-
-# -- Final Permanent Database Connection --
-import dj_database_url
-import os
-
-
-# -- PostgreSQL Fix --
-import dj_database_url
-import os
-
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True
-    )
-}
