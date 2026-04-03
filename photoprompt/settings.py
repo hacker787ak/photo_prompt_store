@@ -4,7 +4,7 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-akshay-key'
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
@@ -50,11 +50,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'photoprompt.wsgi.application'
 
-# --- THE FIX: Force PostgreSQL ---
+# --- ASLI FIX: NO AUTO-CONFIG, DIRECT FETCH ---
 DATABASE_URL = os.environ.get('DATABASE_URL')
-DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600, ssl_require=True)
-}
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
+    DATABASES['default']['CONN_MAX_AGE'] = 600
+else:
+    # Agar URL nahi mila toh server start hi nahi hoga (Error dikhayega)
+    raise Exception("DATABASE_URL not found in Environment Variables!")
 
 AUTH_PASSWORD_VALIDATORS = [{'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'}]
 
@@ -71,6 +76,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
-# Media files fix
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
