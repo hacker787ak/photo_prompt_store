@@ -1,10 +1,8 @@
-Django
+django
 gunicorn
 whitenoise
+dj-database-url
+psycopg2-binary
 pillow
 django-crispy-forms
 crispy-bootstrap5
-dj-database-url
-psycopg2-binary
-dj-database-url
-psycopg2-binary

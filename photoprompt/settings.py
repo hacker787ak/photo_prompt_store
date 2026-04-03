@@ -50,7 +50,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'photoprompt.wsgi.application'
 
-# --- YAHAN HAI ASLI FIX: NO SQLITE ALLOWED ---
+# ASLI FIX: Agar DATABASE_URL nahi mila toh website error degi (SQLite par nahi jayegi)
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL'),
@@ -67,7 +67,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
